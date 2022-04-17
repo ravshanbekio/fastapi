@@ -36,3 +36,9 @@ def blog(id,response:Response, db:Session=Depends(get_db)):
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {"detail":f"Blog with id {id} is not available"}
     return blog
+
+@app.delete("/blog/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def destroy(id, db:Session=Depends(get_db)):
+    db.query(models.Blog).filter(models.Blog.id == id).delete(synchronize_session=False)
+    db.commit()
+    return 'done'
