@@ -3,6 +3,7 @@ from . import schemas, models
 from .database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from .models import Blog
+from typing import List
 
 models.Base.metadata.create_all(engine)
 
@@ -23,12 +24,12 @@ def create(request: schemas.Blog, db: Session=Depends(get_db)):
     db.refresh(blog_data)
     return blog_data
 
-@app.get("/blog", status_code=status.HTTP_200_OK)
+@app.get("/blog", status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog])
 def all_blogs(db:Session=Depends(get_db)):
     blogs = db.query(Blog).all()
     return blogs
 
-@app.get("/blog/{id}", status_code=status.HTTP_200_OK)
+@app.get("/blog/{id}", status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def blog(id,response:Response, db:Session=Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
@@ -53,4 +54,4 @@ def update_blog(id, request: schemas.Blog, db:Session=Depends(get_db)):
     #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with {id} id not found")
     blog.update(request)
     db.commit()
-    return blog
+    return 'Successfully'
