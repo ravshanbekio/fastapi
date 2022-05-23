@@ -56,7 +56,7 @@ def update_blog(id, request: schemas.Blog, db:Session=Depends(get_db)):
     db.commit()
     return 'Successfully'
 
-@app.post("/create/user/")
+@app.post("/create/user/", status_code=status.HTTP_201_CREATED)
 async def create_user(request: schemas.User, db:Session = Depends(get_db)):
     new_user = models.User(name=request.name, email=request.email, username=request.username, country=request.country)
     db.add(new_user)
