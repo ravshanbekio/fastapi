@@ -4,6 +4,8 @@ from .database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from .models import Blog, User
 from typing import List
+from .hashing import Hash
+
 
 models.Base.metadata.create_all(engine)
 
@@ -58,7 +60,7 @@ def update_blog(id, request: schemas.Blog, db:Session=Depends(get_db)):
 
 @app.post("/create/user/", status_code=status.HTTP_201_CREATED)
 async def create_user(request: schemas.User, db:Session = Depends(get_db)):
-    new_user = models.User(name=request.name, email=request.email, username=request.username, country=request.country)
+    new_user = User(name=request.name, email=request.email, username=request.username, country=request.country, password=Hash.bcrypt(request.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

@@ -17,3 +17,4 @@ class User(BaseModel):
     email: str
     username: str
     country: str
+    password: str

@@ -17,3 +17,4 @@ class User(Base):
     email = Column(String)
     username = Column(String)
     country = Column(String)
+    password = Column(String)
