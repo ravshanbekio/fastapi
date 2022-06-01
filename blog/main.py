@@ -1,4 +1,3 @@
-from ctypes.wintypes import tagSIZE
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from . import schemas, models
 from .database import engine, SessionLocal
@@ -7,9 +6,8 @@ from .models import Blog, User
 from typing import List
 from .hashing import Hash
 
-
 models.Base.metadata.create_all(engine)
-
+    
 app = FastAPI()
 
 def get_db():
@@ -55,7 +53,7 @@ def update_blog(id, request: schemas.Blog, db:Session=Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
     # if not blog.first():
     #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with {id} id not found")
-    blog.update(request)
+    blog.update(title=request.title, text=request.text, author=request.author)
     db.commit()
     return 'Successfully'
 

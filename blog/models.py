@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from .database import Base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship 
 
 class Blog(Base):
     __tablename__ = 'blog'
@@ -11,7 +11,7 @@ class Blog(Base):
     author = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    author = relationship('User', back_populates="blogs")
+    owner = relationship('User', back_populates="blogs")
 
 
 class User(Base):
