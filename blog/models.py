@@ -24,4 +24,4 @@ class User(Base):
     country = Column(String)
     password = Column(String)
 
-    blogs = relationship('Blog',back_populates="author")
+    blogs = relationship('Blog',back_populates="owner")

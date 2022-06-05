@@ -19,7 +19,7 @@ def get_db():
 
 @app.post('/blog', status_code=status.HTTP_201_CREATED, tags=["Blog"], response_model=schemas.ShowBlog)
 def create(request: schemas.Blog, db: Session=Depends(get_db)):
-    blog_data = models.Blog(title=request.title, text=request.text, author=request.author)
+    blog_data = models.Blog(title=request.title, text=request.text, author=request.author, user_id=1)
     db.add(blog_data)
     db.commit()
     db.refresh(blog_data)
@@ -65,7 +65,7 @@ async def create_user(request: schemas.User, db:Session = Depends(get_db)):
     db.refresh(new_user)
     return request
 
-@app.get("/user/{id}/", tags=["User"])
+@app.get("/user/{id}/",response_model=schemas.ShowUser, tags=["User"])
 async def get_user(id: int, db:Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if not user:
