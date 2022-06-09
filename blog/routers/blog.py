@@ -3,14 +3,17 @@ from blog import database, schemas, models
 from typing import List
 from sqlalchemy.orm import Session
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/blog",
+    tags=["Blog"]
+)
 
-@router.get("/blog", status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog], tags=["Blog"])
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog])
 def all_blogs(db:Session=Depends(database.get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
-@router.post('/blog', status_code=status.HTTP_201_CREATED, tags=["Blog"], response_model=schemas.ShowBlog)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.ShowBlog)
 def create(request: schemas.Blog, db: Session=Depends(database.get_db)):
     blog_data = models.Blog(title=request.title, text=request.text, author=request.author, user_id=1)
     db.add(blog_data)
@@ -18,7 +21,7 @@ def create(request: schemas.Blog, db: Session=Depends(database.get_db)):
     db.refresh(blog_data)
     return blog_data
 
-@router.get("/blog/{id}", status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog, tags=["Blog"])
+@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
 def blog(id, db:Session=Depends(database.get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
@@ -27,7 +30,7 @@ def blog(id, db:Session=Depends(database.get_db)):
         # return {"detail":f"Blog with id {id} is not available"}
     return blog
 
-@router.delete("/blog/delete/{id}", status_code=status.HTTP_204_NO_CONTENT, tags=["Blog"])
+@router.delete("/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def destroy(id, db:Session=Depends(database.get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
     if not blog.first():
@@ -36,7 +39,7 @@ def destroy(id, db:Session=Depends(database.get_db)):
     db.commit()
     return 'done'
     
-@router.put("/blog/update/{id}/", status_code=status.HTTP_202_ACCEPTED, tags=["Blog"])
+@router.put("/update/{id}/", status_code=status.HTTP_202_ACCEPTED)
 def update_blog(id, request: schemas.Blog, db:Session=Depends(database.get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
     # if not blog.first():
